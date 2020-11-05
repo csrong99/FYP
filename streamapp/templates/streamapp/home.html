@@ -107,7 +107,7 @@
           </tbody>
         </table>
         <div class="text-center">
-                    <?php
+          <?php
 
 // check if the form was submitted
 if ($_POST['submit_button']) {
@@ -123,24 +123,24 @@ else {
     // form not submitted, so show the form
         ?>
 
-        <form method='post' onsubmit="setTimeout(function () { window.location.reload(); }, 10)">
-          {% csrf_token %}
+          <form method='post' onsubmit="setTimeout(function () { window.location.reload(); }, 10)">
+            {% csrf_token %}
             <button type="submit" class="btn btn-primary" name="Update" value="Update">Update</button>
-        </form>
+          </form>
 
-        {% if bool == "true" %}
-          {% update_aloe_vera "av01" %}
-        {% endif %}
+          {% if bool == "true" %}
+          {% update %}
+          {% endif %}
 
-        <?php
+          <?php
 
         } // end "else" loop
 
         ?>
-          
+
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#historyModal">History</button>
           <button type="button" class="btn btn-primary">Settings</button>
-          <button type="submit" class="btr btn-primary">Update</button>
+          <button type="submit" class="btn btn-primary" onclick="location.href='{% url 'update' %}''">Update</button>
         </div>
       </div>
 

@@ -12,8 +12,8 @@ class VideoCamera(object):
 	def __init__(self):
 		# self.video = cv2.VideoCapture(0)
 		self.result = []
-		self.video = cv2.VideoCapture('http://192.168.0.169:8090/camera.mjpeg')
-		#self.video = cv2.VideoCapture('C:\\Users\\Chuah\\Desktop\\FYP\\Django_VideoStream\\object_detection\\streaming.mp4')
+		# self.video = cv2.VideoCapture('http://192.168.0.169:8090/camera.mjpeg')
+		# self.video = cv2.VideoCapture('C:\\Users\\Chuah\\Desktop\\FYP\\backup_out.mp4')
 
 	def __del__(self):
 		self.video.release()
@@ -56,9 +56,9 @@ class VideoCamera(object):
 
 		av_dict = {}
 		for i in range(len(plant_details)):
-			id = "av{:02}".format(str(i+1))
+			id = "av{:02}".format(i+1)
 			h,w = plant_details[i]
-			cond, s_datetime = db.get_condtion_days(id)
+			cond, s_datetime = db.get_condition_days(id)
 			duration_in_day = (now_datetime - s_datetime).days
 			av_dict = {
 				'condition': "{0} since {1} days".format(cond, duration_in_day),

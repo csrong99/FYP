@@ -1092,6 +1092,9 @@ def visualize_boxes_and_labels_on_image_array(
     object_width = width_per_pixel * xbox_pixels
     label = 'Height: {:.2f} cm'.format(object_height)
     label2 = 'Width : {:.2f} cm'.format(object_width)
+
+    av_cond.append((object_height, object_width))
+
     cv2.putText(image, label, (int(xmax*width+25), int(y_mp)),
             cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255),2)
 

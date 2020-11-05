@@ -6,7 +6,7 @@ import pyrebase
 from datetime import datetime, timedelta
 from threading import Timer
 from django import template
-from django_cron import CronJobBase, Schedule
+from streamapp import views
 register = template.Library()
 
 FIREBASE_CONFIG = {
@@ -54,6 +54,10 @@ def get_aloe_vera_history(avid, hid):
         avid).child('histories').child(hid).get()
     return av.val()
 
+@register.simple_tag
+def update():
+    print('hi')
+    views.camera.update()
 
 @register.simple_tag
 def update_aloe_vera(id, data):

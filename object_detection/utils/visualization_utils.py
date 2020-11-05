@@ -1074,15 +1074,28 @@ def visualize_boxes_and_labels_on_image_array(
     height, width, channels = image.shape
     x_mp = (xmin + xmax) / 2 * width
     y_mp = (ymin + ymax) / 2 * height
-    box_pixels = (ymax-ymin) * height
+    xbox_pixels = (xmax-xmin) * width
+    ybox_pixels = (ymax-ymin) * height
+
+    #using the adult aloe vera as assumption(more accurate as baby aloe vera included vase)
+    #height_per_pixel = 80cm/881.4931415399816pixels or 38cm/419.01177406311035 pixels
+    #width_per_pixel = 80cm/942.5119457244873
+    #height_per_pixel = 0.09075510203191971
+    height_per_pixel = 80/881.4931415399816
+    width_per_pixel = 80/942.5119457244873
     
-    
-    #assume that each pixel = 0.12cm, 60cm/500pixels (to be changed)
-    av_height = box_pixels * 0.12
-    av_width = (xmax-xmin) * width * 0.12
-    av_cond.append((av_height, av_width))
-    label = 'Height: {:.2f} cm'.format(av_height)
+    #print(xbox_pixels)
+    #print('xbox_pixels:', xbox_pixels)
+    #print('height per pixel:', height_per_pixel)
+        
+    object_height = height_per_pixel * ybox_pixels
+    object_width = width_per_pixel * xbox_pixels
+    label = 'Height: {:.2f} cm'.format(object_height)
+    label2 = 'Width : {:.2f} cm'.format(object_width)
     cv2.putText(image, label, (int(xmax*width+25), int(y_mp)),
+            cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255),2)
+
+    cv2.putText(image, label2, (int(xmax*width+25), int(y_mp+50)),
             cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255),2)
     
     if instance_masks is not None:

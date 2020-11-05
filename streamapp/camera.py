@@ -6,7 +6,7 @@ from django.conf import settings
 import tensorflow as tf
 from object_detection.av_detection import detect
 from datetime import datetime
-from templatetags import realtime_firebase as db
+from streamapp.templatetags import realtime_firebase as db
 
 class VideoCamera(object):
 	def __init__(self):

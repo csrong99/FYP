@@ -10,19 +10,21 @@ from django_cron import CronJobBase, Schedule
 register = template.Library()
 
 FIREBASE_CONFIG = {
-       "apiKey": "AIzaSyD94vOwL4QElyC5rE1J_-3nQm1CjqveMOg",
-       "authDomain": "final-year-project-def12.firebaseapp.com",
-       "databaseURL": "https://final-year-project-def12.firebaseio.com",
-       "projectId": "final-year-project-def12",
-       "storageBucket": "final-year-project-def12.appspot.com",
-       "messagingSenderId": "287247073978",
-       "appId": "1:287247073978:web:971ebe396135fb30c67883",
-       "measurementId": "G-VQ06E09C78"
-   }
+    "apiKey": "AIzaSyDEStvuQpFoqJEBwYp5MdvfEIAqUGvyFMM",
+    "authDomain": "fyp-aloe-vera.firebaseapp.com",
+    "databaseURL": "https://fyp-aloe-vera.firebaseio.com",
+    "projectId": "fyp-aloe-vera",
+    "storageBucket": "fyp-aloe-vera.appspot.com",
+    "messagingSenderId": "728231515531",
+    "appId": "1:728231515531:web:31d5c6705ad2da03a04b8e",
+    "measurementId": "G-WZH1924DPJ"
+}
+
 
 def firebase_initialization():
     firebase = pyrebase.initialize_app(FIREBASE_CONFIG)
     return firebase
+
 
 @register.simple_tag
 def write_database(data):
@@ -31,10 +33,12 @@ def write_database(data):
     av_id = "av{:02}".format(num_children)
     firebase.database().child('aloevera').child(av_id).set(data)
 
+
 @register.simple_tag
 def update_database(data, node):
     firebase = firebase_initialization()
     firebase.database().child('aloevera').child(node).update(data)
+
 
 @register.simple_tag
 def get_aloe_vera(id):
@@ -42,11 +46,14 @@ def get_aloe_vera(id):
     av = firebase.database().child('aloevera').child(id).get()
     return av.val()
 
+
 @register.simple_tag
 def get_aloe_vera_history(avid, hid):
     firebase = firebase_initialization()
-    av = firebase.database().child('aloevera').child(avid).child('histories').child(hid).get()
+    av = firebase.database().child('aloevera').child(
+        avid).child('histories').child(hid).get()
     return av.val()
+
 
 @register.simple_tag
 def update_aloe_vera(id, data):
@@ -62,13 +69,16 @@ def update_aloe_vera(id, data):
     num_histories = get_history_count(id) + 1
     hid = "h{:02}".format(num_histories)
     firebase.database().child('aloevera').child(id).update(data)
-    firebase.database().child('aloevera').child(id).child('histories').child(hid).set(av_dic)
+    firebase.database().child('aloevera').child(
+        id).child('histories').child(hid).set(av_dic)
+
 
 @register.simple_tag
 def get_children_count():
     firebase = firebase_initialization()
     num = len(firebase.database().child('aloevera').get().val())
     return num
+
 
 @register.simple_tag
 def get_history_count(id):
@@ -79,6 +89,23 @@ def get_history_count(id):
                         .get()
                         .val()['histories'])
     return num_histories
+
+
+def get_condition_days(id):
+    firebase = firebase_initialization()
+    histories = firebase.database().child(
+        'aloevera').child(id).get().val()['histories']
+    cond_history = [histories[i]['condition'] for i in list(histories.keys())]
+    latest_cond = cond_history[-1]
+    uniq_cond_his = []
+    for i in list(histories.keys()):
+        if histories[i]['condition'] == latest_cond:
+            uniq_cond_his.append(histories[i]['datetime'])
+    start_datetime = datetime.strptime(uniq_cond_his[0], "%d/%m/%Y %H:%M:%S")
+    # end_datetime = datetime.strptime(uniq_cond_his[-1], "%d/%m/%Y %H:%M:%S")
+    # duration = end_datetime - start_datetime
+    return latest_cond, start_datetime
+
 
 @register.simple_tag
 def to_str(value):

@@ -113,5 +113,6 @@ def detect(frame):
         min_score_thresh=0.95, skip_scores=True, skip_labels=True)
 
     frameResize = cv2.resize(frame, (800, 400))
+    print(av_cond_list)
 
     return frameResize, av_cond_list

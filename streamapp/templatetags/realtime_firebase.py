@@ -95,6 +95,7 @@ def get_history_count(id):
     return num_histories
 
 
+@register.simple_tag
 def get_condition_days(id):
     firebase = firebase_initialization()
     histories = firebase.database().child(
@@ -105,10 +106,12 @@ def get_condition_days(id):
     for i in list(histories.keys()):
         if histories[i]['condition'] == latest_cond:
             uniq_cond_his.append(histories[i]['datetime'])
+    #start_datetime = datetime.strptime(uniq_cond_his[0], "%d/%m/%Y %H:%M:%S")
     start_datetime = datetime.strptime(uniq_cond_his[0], "%d/%m/%Y %H:%M:%S")
+    start_datetime_final = start_datetime.strftime("%d/%m/%Y")
     # end_datetime = datetime.strptime(uniq_cond_his[-1], "%d/%m/%Y %H:%M:%S")
     # duration = end_datetime - start_datetime
-    return latest_cond, start_datetime
+    return latest_cond, start_datetime_final
 
 
 @register.simple_tag

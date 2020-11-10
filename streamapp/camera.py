@@ -61,10 +61,10 @@ class VideoCamera(object):
 			cond, s_datetime = db.get_condition_days(id)
 			duration_in_day = (now_datetime - s_datetime).days
 			av_dict = {
-				'condition': "{0} since {1} days".format(cond, duration_in_day),
+				'condition': cond,
 				'datetime': now_datetime_str,
-				'height': h,
-				'width': w
+				'height': round(h,2),
+				'width': round(w,2)
 			}
 			db.update_aloe_vera(id, av_dict)
 

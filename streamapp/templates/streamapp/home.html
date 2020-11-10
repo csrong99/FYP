@@ -31,18 +31,20 @@
           </thead>
           <tbody>
             <tr>
-              {% load realtime_firebase %}
+             {% load realtime_firebase %}
               {% get_aloe_vera "av01" as aloevera %}
               {% for x in aloevera %}
               {% if x == "condition" %}
-              <td>{{aloevera.condition|capfirst}}</td>
+                  {% get_condition_days "av01" as time %}
+              <td>{{aloevera.condition|capfirst}} since {{time.1}}</td>
               {% endif %}
               {% endfor %}
 
               {% get_aloe_vera "av02" as aloevera %}
               {% for x in aloevera %}
               {% if x == "condition" %}
-              <td>{{aloevera.condition|capfirst}}</td>
+                  {% get_condition_days "av02" as time %}
+              <td>{{aloevera.condition|capfirst}} since {{time.1}}</td>
               {% endif %}
               {% endfor %}
             </tr>

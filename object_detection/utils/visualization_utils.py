@@ -1078,11 +1078,10 @@ def visualize_boxes_and_labels_on_image_array(
     ybox_pixels = (ymax-ymin) * height
 
     #using the adult aloe vera as assumption(more accurate as baby aloe vera included vase)
-    #height_per_pixel = 80cm/881.4931415399816pixels or 38cm/419.01177406311035 pixels
-    #width_per_pixel = 80cm/942.5119457244873
-    #height_per_pixel = 0.09075510203191971
-    height_per_pixel = 80/881.4931415399816
-    width_per_pixel = 80/942.5119457244873
+   #height_per_pixel = 80cm/760.59124323725701pixels
+    #width_per_pixel = 80cm/1104.33350042663576
+    height_per_pixel = 80/760.59124323725701
+    width_per_pixel = 80/1104.33350042663576
     
     #print(xbox_pixels)
     #print('xbox_pixels:', xbox_pixels)

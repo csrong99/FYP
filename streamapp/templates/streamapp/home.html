@@ -107,22 +107,6 @@
           </tbody>
         </table>
         <div class="text-center">
-          <?php
-
-// check if the form was submitted
-if ($_POST['submit_button']) {
-    // this means the submit button was clicked, and the form has refreshed the page
-    // to access the content in text area, you would do this
-    $a = $_POST['update'];
-
-    // now $a contains the data from the textarea, so you can do whatever with it
-    // this will echo the data on the page
-    echo $a;
-}
-else {
-    // form not submitted, so show the form
-        ?>
-
           <form method='post' onsubmit="setTimeout(function () { window.location.reload(); }, 10)">
             {% csrf_token %}
             <button type="submit" class="btn btn-primary" name="Update" value="Update">Update</button>
@@ -131,12 +115,6 @@ else {
           {% if bool == "true" %}
           {% update %}
           {% endif %}
-
-          <?php
-
-        } // end "else" loop
-
-        ?>
 
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#historyModal">History</button>
           <button type="button" class="btn btn-primary">Settings</button>

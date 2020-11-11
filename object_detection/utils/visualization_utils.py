@@ -1066,9 +1066,10 @@ def visualize_boxes_and_labels_on_image_array(
           box_to_color_map[box] = STANDARD_COLORS[
               classes[i] % len(STANDARD_COLORS)]
 
-  av_cond = []
+  avs_hw = []
   # Draw all boxes onto image.
-  for box, color in box_to_color_map.items():
+  box_to_color_map = sorted(box_to_color_map.items(), key = lambda kv:(kv[1], kv[0]))
+  for box, color in box_to_color_map:
     ymin, xmin, ymax, xmax = box
     #modify here
     height, width, channels = image.shape
@@ -1092,7 +1093,7 @@ def visualize_boxes_and_labels_on_image_array(
     label = 'Height: {:.2f} cm'.format(object_height)
     label2 = 'Width : {:.2f} cm'.format(object_width)
 
-    av_cond.append((object_height, object_width))
+    avs_hw.append((object_height, object_width))
 
     cv2.putText(image, label, (int(xmax*width+25), int(y_mp)),
             cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255),2)
@@ -1166,7 +1167,7 @@ def visualize_boxes_and_labels_on_image_array(
     #cv2.imshow("Before mask",cropImageResize)
     #cv2.imshow("After mask",resultResize)
 
-  return av_cond
+  return avs_hw
 
 
 def add_cdf_image_summary(values, name):

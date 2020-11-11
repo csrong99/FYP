@@ -31,22 +31,32 @@
           </thead>
           <tbody>
             <tr>
-             {% load realtime_firebase %}
+              {% load realtime_firebase %}
               {% get_aloe_vera "av01" as aloevera %}
               {% for x in aloevera %}
               {% if x == "condition" %}
-                  {% get_condition_days "av01" as time %}
-              <td>{{aloevera.condition|capfirst}} since {{time.1}}</td>
+              {% get_condition_days "av01" as time %}
+              <td>{{aloevera.condition|capfirst}} since {{time.1}} to {{time.2}} ({{time.3}} days)</td>
               {% endif %}
               {% endfor %}
 
               {% get_aloe_vera "av02" as aloevera %}
               {% for x in aloevera %}
               {% if x == "condition" %}
-                  {% get_condition_days "av02" as time %}
-              <td>{{aloevera.condition|capfirst}} since {{time.1}}</td>
+              {% get_condition_days "av02" as time %}
+              <td>{{aloevera.condition|capfirst}} since {{time.1}} to {{time.2}} ({{time.3}} days)</td>
               {% endif %}
               {% endfor %}
+            </tr>
+            <tr>
+              <td>
+                {% get_health "av01" as health %}
+                {{health}}
+              </td>
+              <td>
+                {% get_health "av02" as health %}
+                {{health}}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -110,7 +120,7 @@
         </table>
         <div class="text-center">
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#historyModal">History</button>
-          <button type="button" class="btn btn-primary">Settings</button>
+          <!-- <button type="button" class="btn btn-primary">Settings</button> -->
           <button type="submit" class="btn btn-primary" onclick="location.href='{% url 'update' %}'">Update</button>
         </div>
       </div>

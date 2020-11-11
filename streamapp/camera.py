@@ -55,11 +55,13 @@ class VideoCamera(object):
 		now_datetime_str = now_datetime.strftime("%d/%m/%Y %H:%M:%S")
 
 		av_dict = {}
-		for i in range(len(plant_details)):
+		for i in range(2):
+		# for i in range(len(plant_details)):
 			id = "av{:02}".format(i+1)
 			h,w = plant_details[i]
-			cond, s_datetime = db.get_condition_days(id)
-			duration_in_day = (now_datetime - s_datetime).days
+			# cond, s_datetime, _ = db.get_condition_days(id)
+			cond = db.get_condition_days(id)[0]
+			# duration_in_day = (now_datetime - s_datetime).days
 			av_dict = {
 				'condition': cond,
 				'datetime': now_datetime_str,

@@ -98,8 +98,8 @@ def get_history_count(id):
 @register.simple_tag
 def get_condition_days(id):
     firebase = firebase_initialization()
-    histories = firebase.database().child(
-        'aloevera').child(id).get().val()['histories']
+    end_datetime = firebase.database().child('aloevera').child(id).get().val()['datetime']
+    histories = firebase.database().child('aloevera').child(id).get().val()['histories']
     cond_history = [histories[i]['condition'] for i in list(histories.keys())]
     latest_cond = cond_history[-1]
     uniq_cond_his = []
@@ -109,9 +109,22 @@ def get_condition_days(id):
     #start_datetime = datetime.strptime(uniq_cond_his[0], "%d/%m/%Y %H:%M:%S")
     start_datetime = datetime.strptime(uniq_cond_his[0], "%d/%m/%Y %H:%M:%S")
     start_datetime_final = start_datetime.strftime("%d/%m/%Y")
-    # end_datetime = datetime.strptime(uniq_cond_his[-1], "%d/%m/%Y %H:%M:%S")
-    # duration = end_datetime - start_datetime
-    return latest_cond, start_datetime_final
+    end_datetime = datetime.strptime(end_datetime, "%d/%m/%Y %H:%M:%S")
+    end_datetime_final = end_datetime.strftime("%d/%m/%Y")
+    duration = end_datetime - start_datetime
+    return latest_cond, start_datetime_final, end_datetime_final, duration.days
+
+@register.simple_tag
+def get_health(id):
+    firebase = firebase_initialization()
+    av = firebase.database().child('aloevera').child(id).get().val()
+    height = av['height']
+    width = av['width']
+    hw_ratio = height / width
+    if hw_ratio > 1.5:
+        return "Healthy"
+    else:
+        return "Not Healthy"
 
 
 @register.simple_tag

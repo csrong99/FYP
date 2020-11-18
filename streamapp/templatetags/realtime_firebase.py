@@ -126,7 +126,6 @@ def get_health(id):
     else:
         return "Not Healthy"
 
-
 @register.simple_tag
 def to_str(value):
     return str(value)

@@ -116,3 +116,5 @@ def detect(frame):
     print(av_cond_list)
 
     return frameResize, av_cond_list
+
+

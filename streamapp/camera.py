@@ -12,8 +12,8 @@ class VideoCamera(object):
 	def __init__(self):
 		# self.video = cv2.VideoCapture(0)
 		self.result = []
-		self.video = cv2.VideoCapture('http://192.168.0.169:8090/camera.mjpeg')
-		# self.video = cv2.VideoCapture('C:\\Users\\Chuah\\Desktop\\FYP\\backup_out.mp4')
+		# self.video = cv2.VideoCapture('http://192.168.0.169:8090/camera.mjpeg')
+		self.video = cv2.VideoCapture('C:\\Users\\Chuah\\Desktop\\FYP\\backup_out.mp4')
 
 	def __del__(self):
 		self.video.release()

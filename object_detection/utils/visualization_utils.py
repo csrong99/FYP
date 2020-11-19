@@ -1068,6 +1068,7 @@ def visualize_boxes_and_labels_on_image_array(
 
   avs_hw = []
   # Draw all boxes onto image.
+  image = separate_regions(image, col=2)
   box_to_color_map = sorted(box_to_color_map.items(), key = lambda kv:(kv[1], kv[0]))
   for box, color in box_to_color_map:
     ymin, xmin, ymax, xmax = box
@@ -1168,6 +1169,16 @@ def visualize_boxes_and_labels_on_image_array(
     #cv2.imshow("After mask",resultResize)
 
   return avs_hw
+
+def separate_regions(image, col):
+  h, w, _ = image.shape
+  w_per_region = int(w / col)
+  for i in range(1, col): 
+    start_point = (w_per_region * i, 0)
+    end_point = (w_per_region * i, h)
+    print(start_point, " ", end_point)
+    image = cv2.line(image, start_point, end_point, (0, 0, 255), 2)
+  return image
 
 
 def add_cdf_image_summary(values, name):

@@ -1070,6 +1070,7 @@ def visualize_boxes_and_labels_on_image_array(
   # Draw all boxes onto image.
   image = separate_regions(image, col=2)
   box_to_color_map = sorted(box_to_color_map.items(), key = lambda kv:(kv[1], kv[0]))
+  count = 1
   for box, color in box_to_color_map:
     ymin, xmin, ymax, xmax = box
     #modify here
@@ -1091,11 +1092,16 @@ def visualize_boxes_and_labels_on_image_array(
         
     object_height = height_per_pixel * ybox_pixels
     object_width = width_per_pixel * xbox_pixels
+    
+    plant_name = 'Plant {:02}'.format(count)
     label = 'Height: {:.2f} cm'.format(object_height)
     label2 = 'Width : {:.2f} cm'.format(object_width)
 
     avs_hw.append((object_height, object_width))
 
+    cv2.putText(image, plant_name, (int(xmax*width+25), int(y_mp-50)),
+            #cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255),4)
+    
     cv2.putText(image, label, (int(xmax*width+25), int(y_mp)),
             cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255),2)
 

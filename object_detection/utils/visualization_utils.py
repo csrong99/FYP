@@ -1081,7 +1081,7 @@ def visualize_boxes_and_labels_on_image_array(
     ybox_pixels = (ymax-ymin) * height
 
     #using the adult aloe vera as assumption(more accurate as baby aloe vera included vase)
-   #height_per_pixel = 80cm/760.59124323725701pixels
+    #height_per_pixel = 80cm/760.59124323725701pixels
     #width_per_pixel = 80cm/1104.33350042663576
     height_per_pixel = 80/760.59124323725701
     width_per_pixel = 80/1104.33350042663576
@@ -1096,7 +1096,8 @@ def visualize_boxes_and_labels_on_image_array(
     plant_name = 'Plant {:02}'.format(count)
     label = 'Height: {:.2f} cm'.format(object_height)
     label2 = 'Width : {:.2f} cm'.format(object_width)
-
+    
+    count = count + 1
     avs_hw.append((object_height, object_width))
 
     cv2.putText(image, plant_name, (int(xmax*width+25), int(y_mp-50)),

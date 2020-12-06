@@ -1101,7 +1101,7 @@ def visualize_boxes_and_labels_on_image_array(
     avs_hw.append((object_height, object_width))
 
     cv2.putText(image, plant_name, (int(xmax*width+25), int(y_mp-50)),
-            #cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255),4)
+            cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255),4)
     
     cv2.putText(image, label, (int(xmax*width+25), int(y_mp)),
             cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255),2)

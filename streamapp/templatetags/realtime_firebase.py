@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from threading import Timer
 from django import template
 from streamapp import views
+from object_detection import av_detection_analysis as avda
 register = template.Library()
 
 FIREBASE_CONFIG = {
@@ -56,7 +57,6 @@ def get_aloe_vera_history(avid, hid):
 
 @register.simple_tag
 def update():
-    print('hi')
     views.camera.update()
 
 @register.simple_tag
@@ -87,30 +87,37 @@ def get_children_count():
 @register.simple_tag
 def get_history_count(id):
     firebase = firebase_initialization()
-    num_histories = len(firebase.database()
-                        .child('aloevera')
-                        .child(id)
-                        .get()
-                        .val()['histories'])
-    return num_histories
+    histories_dict = firebase.database().child('aloevera').child(id).get().val()['histories']
+    keys = histories_dict.keys()
+    histories = [ histories_dict[key] for key in keys ]
+    return histories
 
 
 @register.simple_tag
 def get_condition_days(id):
     firebase = firebase_initialization()
-    end_datetime = firebase.database().child('aloevera').child(id).get().val()['datetime']
-    histories = firebase.database().child('aloevera').child(id).get().val()['histories']
-    cond_history = [histories[i]['condition'] for i in list(histories.keys())]
-    latest_cond = cond_history[-1]
-    uniq_cond_his = []
-    for i in list(histories.keys()):
-        if histories[i]['condition'] == latest_cond:
-            uniq_cond_his.append(histories[i]['datetime'])
-    #start_datetime = datetime.strptime(uniq_cond_his[0], "%d/%m/%Y %H:%M:%S")
-    start_datetime = datetime.strptime(uniq_cond_his[0], "%d/%m/%Y %H:%M:%S")
+    av_data = firebase.database().child('aloevera').child(id).get().val()
+    end_datetime = av_data['datetime']
+    histories = av_data['histories']
+    
+    latest_cond = av_data['condition']
+
+    if latest_cond == "Null":
+        return None
+
+    uniq_cond_his = [histories[key]['datetime'] for key in histories.keys() if histories[key]['condition'] == latest_cond]
+
+    if len(uniq_cond_his) == 0:
+        start_datetime = av_data['datetime']
+    else:
+        start_datetime = uniq_cond_his[0]
+
+    start_datetime = datetime.strptime(start_datetime, "%d/%m/%Y %H:%M:%S")
     start_datetime_final = start_datetime.strftime("%d/%m/%Y")
+
     end_datetime = datetime.strptime(end_datetime, "%d/%m/%Y %H:%M:%S")
     end_datetime_final = end_datetime.strftime("%d/%m/%Y")
+
     duration = end_datetime - start_datetime
     return latest_cond, start_datetime_final, end_datetime_final, duration.days
 
@@ -120,11 +127,10 @@ def get_health(id):
     av = firebase.database().child('aloevera').child(id).get().val()
     height = av['height']
     width = av['width']
-    hw_ratio = height / width
-    if hw_ratio > 1.5:
-        return "Healthy"
-    else:
-        return "Not Healthy"
+    if height == 0.0 or width == 0.0:
+        return "Null"
+    return avda.check_av_health_condition(height, width)
+
 
 @register.simple_tag
 def to_str(value):

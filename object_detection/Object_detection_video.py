@@ -91,7 +91,9 @@ detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
 num_detections = detection_graph.get_tensor_by_name('num_detections:0')
 
 # Open video file
-video = cv2.VideoCapture(PATH_TO_VIDEO)
+# video = cv2.VideoCapture(PATH_TO_VIDEO)
+video = cv2.VideoCapture('C:\\Users\\Chuah\\Desktop\\FYP\\backup_out.mp4')
+
 fps = video.get(5)
 
 while(video.isOpened()):
@@ -140,6 +142,7 @@ while(video.isOpened()):
             np.squeeze(classes).astype(np.int32),
             np.squeeze(scores),
             category_index,
+            # col_to_split=2,
             use_normalized_coordinates=True,
             line_thickness=8,
             min_score_thresh=0.95)  

@@ -24,6 +24,5 @@ def video_feed(request):
 					content_type='multipart/x-mixed-replace; boundary=frame')
 
 def update(request):
-	print('hi')
 	camera.update()
 	return render(request, 'streamapp/home.html')

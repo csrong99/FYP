@@ -36,7 +36,11 @@
               {% for x in aloevera %}
               {% if x == "condition" %}
               {% get_condition_days "av01" as time %}
+              {% if time == None %}
+              <td>Latest record is missing. Possible missing or havested. </td>
+              {% else %}
               <td>{{aloevera.condition|capfirst}} since {{time.1}} to {{time.2}} ({{time.3}} days)</td>
+              {% endif %}
               {% endif %}
               {% endfor %}
 
@@ -44,7 +48,11 @@
               {% for x in aloevera %}
               {% if x == "condition" %}
               {% get_condition_days "av02" as time %}
+              {% if time == None %}
+              <td>Latest record is missing. Possible missing or havested. </td>
+              {% else %}
               <td>{{aloevera.condition|capfirst}} since {{time.1}} to {{time.2}} ({{time.3}} days)</td>
+              {% endif %}
               {% endif %}
               {% endfor %}
             </tr>
@@ -146,24 +154,16 @@
                   <td>Height</td>
                 </tr>
 
-                {% get_history_count "av01" as count %}
-                {% with ''|center:count as range %}
-                {% get_aloe_vera "av01" as aloevera %}
-                {% for x in range %}
-
-                {% to_str forloop.counter as num %}
-                {% with name="h0"|add:num %}
-                {% get_aloe_vera_history "av01" name as avHistory %}
+                {% get_history_count "av01" as histories %}
+                {% for x in histories %}
                 <tr>
-                  <td>{{avHistory.datetime|capfirst}}</td>
-                  <td>{{avHistory.condition|capfirst}}</td>
-                  <td>{{avHistory.width|capfirst}} cm</td>
-                  <td>{{avHistory.height|capfirst}} cm</td>
+                  <td>{{x.datetime|capfirst}}</td>
+                  <td>{{x.condition|capfirst}}</td>
+                  <td>{{x.width|capfirst}} cm</td>
+                  <td>{{x.height|capfirst}} cm</td>
                 </tr>
-                {% endwith %}
 
                 {% endfor %}
-                {% endwith %}
               </tbody>
             </table>
 
@@ -178,25 +178,16 @@
                   <td>Width</td>
                   <td>Height</td>
                 </tr>
-
-                {% get_history_count "av02" as count %}
-                {% with ''|center:count as range %}
-                {% get_aloe_vera "av02" as aloevera %}
-                {% for x in range %}
-
-                {% to_str forloop.counter as num %}
-                {% with name="h0"|add:num %}
-                {% get_aloe_vera_history "av02" name as avHistory %}
+                {% get_history_count "av02" as histories %}
+                {% for x in histories %}
                 <tr>
-                  <td>{{avHistory.datetime|capfirst}}</td>
-                  <td>{{avHistory.condition|capfirst}}</td>
-                  <td>{{avHistory.width|capfirst}} cm</td>
-                  <td>{{avHistory.height|capfirst}} cm</td>
+                  <td>{{x.datetime|capfirst}}</td>
+                  <td>{{x.condition|capfirst}}</td>
+                  <td>{{x.width|capfirst}} cm</td>
+                  <td>{{x.height|capfirst}} cm</td>
                 </tr>
-                {% endwith %}
 
                 {% endfor %}
-                {% endwith %}
               </tbody>
             </table>
           </div>

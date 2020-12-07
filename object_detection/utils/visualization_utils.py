@@ -941,6 +941,9 @@ def visualize_boxes_and_labels_on_image_array(
     classes,
     scores,
     category_index,
+    avs_hw,
+    avs_placement_label=None,
+    col_to_split=None,
     instance_masks=None,
     instance_boundaries=None,
     keypoints=None,
@@ -975,6 +978,7 @@ def visualize_boxes_and_labels_on_image_array(
       boxes and plot all boxes as black with no classes or scores.
     category_index: a dict containing category dictionaries (each holding
       category index `id` and category name `name`) keyed by category indices.
+    col_to_split: the int value to determine how much aloe vera in the image
     instance_masks: a numpy array of shape [N, image_height, image_width] with
       values ranging between 0 and 1, can be None.
     instance_boundaries: a numpy array of shape [N, image_height, image_width]
@@ -1016,91 +1020,78 @@ def visualize_boxes_and_labels_on_image_array(
   box_to_instance_boundaries_map = {}
   box_to_keypoints_map = collections.defaultdict(list)
   box_to_keypoint_scores_map = collections.defaultdict(list)
+  box_to_hw_map = collections.defaultdict(list)
   box_to_track_ids_map = {}
+  
   if not max_boxes_to_draw:
     max_boxes_to_draw = boxes.shape[0]
   for i in range(boxes.shape[0]):
     if max_boxes_to_draw == len(box_to_color_map):
       break
-    if scores is None or scores[i] > min_score_thresh:
-      box = tuple(boxes[i].tolist())
-      if instance_masks is not None:
-        box_to_instance_masks_map[box] = instance_masks[i]
-      if instance_boundaries is not None:
-        box_to_instance_boundaries_map[box] = instance_boundaries[i]
-      if keypoints is not None:
-        box_to_keypoints_map[box].extend(keypoints[i])
-      if keypoint_scores is not None:
-        box_to_keypoint_scores_map[box].extend(keypoint_scores[i])
-      if track_ids is not None:
-        box_to_track_ids_map[box] = track_ids[i]
-      if scores is None:
-        box_to_color_map[box] = groundtruth_box_visualization_color
-      else:
-        display_str = ''
-        if not skip_labels:
-          if not agnostic_mode:
-            if classes[i] in six.viewkeys(category_index):
-              class_name = category_index[classes[i]]['name']
-            else:
-              class_name = 'N/A'
-            display_str = str(class_name)
-        if not skip_scores:
-          if not display_str:
-            display_str = '{}%'.format(round(100*scores[i]))
+    box = tuple(boxes[i].tolist())
+    box_to_hw_map[box] = avs_hw[i]
+    if instance_masks is not None:
+      box_to_instance_masks_map[box] = instance_masks[i]
+    if instance_boundaries is not None:
+      box_to_instance_boundaries_map[box] = instance_boundaries[i]
+    if keypoints is not None:
+      box_to_keypoints_map[box].extend(keypoints[i])
+    if keypoint_scores is not None:
+      box_to_keypoint_scores_map[box].extend(keypoint_scores[i])
+    if track_ids is not None:
+      box_to_track_ids_map[box] = track_ids[i]
+    if scores is None:
+      box_to_color_map[box] = groundtruth_box_visualization_color
+    else:
+      display_str = ''
+      if not skip_labels:
+        if not agnostic_mode:
+          if classes[i] in six.viewkeys(category_index):
+            class_name = category_index[classes[i]]['name']
+          if avs_placement_label is not None:
+            class_name = class_name + " " + str(avs_placement_label[i])
           else:
-            display_str = '{}: {}%'.format(display_str, round(100*scores[i]))
-        if not skip_track_ids and track_ids is not None:
-          if not display_str:
-            display_str = 'ID {}'.format(track_ids[i])
-          else:
-            display_str = '{}: ID {}'.format(display_str, track_ids[i])
-        box_to_display_str_map[box].append(display_str)
-        if agnostic_mode:
-          box_to_color_map[box] = 'DarkOrange'
-        elif track_ids is not None:
-          prime_multipler = _get_multiplier_for_color_randomness()
-          box_to_color_map[box] = STANDARD_COLORS[
-              (prime_multipler * track_ids[i]) % len(STANDARD_COLORS)]
+            class_name = 'N/A'
+          display_str = str(class_name)
+      if not skip_scores:
+        if not display_str:
+          display_str = '{}%'.format(round(100*scores[i]))
         else:
-          box_to_color_map[box] = STANDARD_COLORS[
-              classes[i] % len(STANDARD_COLORS)]
+          display_str = '{}: {}%'.format(display_str, round(100*scores[i]))
+      if not skip_track_ids and track_ids is not None:
+        if not display_str:
+          display_str = 'ID {}'.format(track_ids[i])
+        else:
+          display_str = '{}: ID {}'.format(display_str, track_ids[i])
+      box_to_display_str_map[box].append(display_str)
+      if agnostic_mode:
+        box_to_color_map[box] = 'DarkOrange'
+      elif track_ids is not None:
+        prime_multipler = _get_multiplier_for_color_randomness()
+        box_to_color_map[box] = STANDARD_COLORS[
+            (prime_multipler * track_ids[i]) % len(STANDARD_COLORS)]
+      else:
+        box_to_color_map[box] = STANDARD_COLORS[
+            classes[i] % len(STANDARD_COLORS)]
 
-  avs_hw = []
   # Draw all boxes onto image.
-  image = separate_regions(image, col=2)
+  if col_to_split != None:
+    image = separate_regions(image, col=col_to_split)
   box_to_color_map = sorted(box_to_color_map.items(), key = lambda kv:(kv[1], kv[0]))
   for box, color in box_to_color_map:
     ymin, xmin, ymax, xmax = box
     #modify here
-    height, width, channels = image.shape
-    x_mp = (xmin + xmax) / 2 * width
+    height, width, _ = image.shape
     y_mp = (ymin + ymax) / 2 * height
-    xbox_pixels = (xmax-xmin) * width
-    ybox_pixels = (ymax-ymin) * height
-
-    #using the adult aloe vera as assumption(more accurate as baby aloe vera included vase)
-   #height_per_pixel = 80cm/760.59124323725701pixels
-    #width_per_pixel = 80cm/1104.33350042663576
-    height_per_pixel = 80/760.59124323725701
-    width_per_pixel = 80/1104.33350042663576
     
-    #print(xbox_pixels)
-    #print('xbox_pixels:', xbox_pixels)
-    #print('height per pixel:', height_per_pixel)
-        
-    object_height = height_per_pixel * ybox_pixels
-    object_width = width_per_pixel * xbox_pixels
-    label = 'Height: {:.2f} cm'.format(object_height)
-    label2 = 'Width : {:.2f} cm'.format(object_width)
+    label = 'Height: {:.2f} cm'.format(box_to_hw_map[box][0])
+    label2 = 'Width : {:.2f} cm'.format(box_to_hw_map[box][1])
 
-    avs_hw.append((object_height, object_width))
+    cv2.putText(image, label, (int(xmax*width+25), int(y_mp-30)),
+            cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 1)
 
-    cv2.putText(image, label, (int(xmax*width+25), int(y_mp)),
-            cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255),2)
-
-    cv2.putText(image, label2, (int(xmax*width+25), int(y_mp+50)),
-            cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255),2)
+    cv2.putText(image, label2, (int(xmax*width+25), int(y_mp+20)),
+            cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 1)
     
     if instance_masks is not None:
       draw_mask_on_image_array(
@@ -1141,34 +1132,33 @@ def visualize_boxes_and_labels_on_image_array(
           keypoint_edge_color=color,
           keypoint_edge_width=line_thickness // 2)
 
-    #colour filtering
-    x1 = xmin * width
-    x2 = xmax * width
-    y1 = ymin * height
-    y2 = ymax * height
-    cropImage = image[int(y1):int(y2),int(x1):int(x2)]
+    # #colour filtering
+    # x1 = xmin * width
+    # x2 = xmax * width
+    # y1 = ymin * height
+    # y2 = ymax * height
+    # cropImage = image[int(y1):int(y2),int(x1):int(x2)]
     
-    #Converts BGR color space of image to HSV color space
-    hsv = cv2.cvtColor(cropImage,cv2.COLOR_BGR2HSV)
+    # #Converts BGR color space of image to HSV color space
+    # hsv = cv2.cvtColor(cropImage,cv2.COLOR_BGR2HSV)
 
-    brown = np.uint8([[[66, 100, 159]]]) 
-    hsvBrown = cv2.cvtColor(brown, cv2.COLOR_BGR2HSV)
+    # brown = np.uint8([[[66, 100, 159]]]) 
+    # hsvBrown = cv2.cvtColor(brown, cv2.COLOR_BGR2HSV)
 
-    # define range of brown color in HSV
-    lower_brown = hsvBrown[0][0][0] - 10, 100, 100
-    upper_brown = hsvBrown[0][0][0] + 10, 255, 255
+    # # define range of brown color in HSV
+    # lower_brown = hsvBrown[0][0][0] - 10, 100, 100
+    # upper_brown = hsvBrown[0][0][0] + 10, 255, 255
 
-    # Threshold the HSV image to get only brown colors
-    mask = cv2.inRange(hsv, (1,100,100), (21,255,255))
+    # # Threshold the HSV image to get only brown colors
+    # mask = cv2.inRange(hsv, (1,100,100), (21,255,255))
 
-    # Bitwise-AND mask and original image
-    result = cv2.bitwise_and(cropImage,cropImage, mask= mask)
-    cropImageResize = cv2.resize(cropImage, (800,400))
-    resultResize = cv2.resize(result, (800,400))
-    #cv2.imshow("Before mask",cropImageResize)
-    #cv2.imshow("After mask",resultResize)
+    # # Bitwise-AND mask and original image
+    # result = cv2.bitwise_and(cropImage,cropImage, mask= mask)
+    # cropImageResize = cv2.resize(cropImage, (800,400))
+    # resultResize = cv2.resize(result, (800,400))
+    # #cv2.imshow("Before mask",cropImageResize)
+    # #cv2.imshow("After mask",resultResize)
 
-  return avs_hw
 
 def separate_regions(image, col):
   h, w, _ = image.shape
@@ -1176,7 +1166,6 @@ def separate_regions(image, col):
   for i in range(1, col): 
     start_point = (w_per_region * i, 0)
     end_point = (w_per_region * i, h)
-    print(start_point, " ", end_point)
     image = cv2.line(image, start_point, end_point, (0, 0, 255), 2)
   return image
 

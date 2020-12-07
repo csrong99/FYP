@@ -1078,6 +1078,7 @@ def visualize_boxes_and_labels_on_image_array(
   if col_to_split != None:
     image = separate_regions(image, col=col_to_split)
   box_to_color_map = sorted(box_to_color_map.items(), key = lambda kv:(kv[1], kv[0]))
+  count = 1
   for box, color in box_to_color_map:
     ymin, xmin, ymax, xmax = box
     #modify here

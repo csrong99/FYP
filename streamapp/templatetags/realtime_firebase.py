@@ -89,9 +89,16 @@ def get_history_count(id):
     firebase = firebase_initialization()
     histories_dict = firebase.database().child('aloevera').child(id).get().val()['histories']
     keys = histories_dict.keys()
+    history_count = len(keys)
+    return history_count
+
+@register.simple_tag
+def get_alov_vera_histories(id):
+    firebase = firebase_initialization()
+    histories_dict = firebase.database().child('aloevera').child(id).get().val()['histories']
+    keys = histories_dict.keys()
     histories = [ histories_dict[key] for key in keys ]
     return histories
-
 
 @register.simple_tag
 def get_condition_days(id):

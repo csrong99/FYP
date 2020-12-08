@@ -1,12 +1,13 @@
 import cv2
 import numpy as np
 
-video = cv2.VideoCapture('http://192.168.0.169:8090/camera.mjpeg')
-# video = cv2.VideoCapture('http://192.168.0.169:8090/v4.h264')
+# video = cv2.VideoCapture('http://192.168.0.169:8090/camera.mjpeg')
+video = cv2.VideoCapture('http://192.168.0.169:8090/v4.h264')
 
 while True:
     _, frame = video.read()
 
+    ori_frame = frame.copy()
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     lower_red = np.array([110, 60, 0])
@@ -46,7 +47,9 @@ while True:
     frame = cv2.resize(frame, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_CUBIC)
     mask = cv2.resize(mask, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_CUBIC)
     res = cv2.resize(res, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_CUBIC)
+    ori_frame = cv2.resize(ori_frame, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_CUBIC)
 
+    cv2.imshow('ori', ori_frame)
     cv2.imshow('frame', frame)
     cv2.imshow('mask', mask)
     cv2.imshow('res', res)

@@ -165,7 +165,7 @@
                   <td>Height</td>
                 </tr>
 
-                {% get_history_count "av01" as histories %}
+                {% get_alov_vera_histories "av01" as histories %}
                 {% for x in histories %}
                 <tr>
                   <td>{{x.datetime|capfirst}}</td>
@@ -189,7 +189,7 @@
                   <td>Width</td>
                   <td>Height</td>
                 </tr>
-                {% get_history_count "av02" as histories %}
+                {% get_alov_vera_histories "av02" as histories %}
                 {% for x in histories %}
                 <tr>
                   <td>{{x.datetime|capfirst}}</td>

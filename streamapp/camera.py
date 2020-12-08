@@ -14,8 +14,8 @@ class VideoCamera(object):
 		self.result = {}
 		# self.video = cv2.VideoCapture('http://192.168.0.169:8090/camera.mjpeg')
 		# self.video = cv2.VideoCapture('http://192.168.0.169:8090/v6.h264') # aloevera01
-		self.video = cv2.VideoCapture('http://192.168.0.169:8090/v7.h264') # aloevera02
-		# self.video = cv2.VideoCapture('http://192.168.0.169:8090/v8.h264') # aloevera01 & 02
+		# self.video = cv2.VideoCapture('http://192.168.0.169:8090/v7.h264') # aloevera02
+		self.video = cv2.VideoCapture('http://192.168.0.169:8090/v8.h264') # aloevera01 & 02
 
 	def __del__(self):
 		self.video.release()

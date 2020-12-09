@@ -104,7 +104,7 @@ def find_area_of_interest(frame):
     # Converting the image to black and white
     (_, res) = cv2.threshold(res, 90, 255, cv2.THRESH_BINARY)
 
-    _, contours, _ = cv2.findContours(res, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    contours, _ = cv2.findContours(res, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 
     
     cnt = contours[0]
@@ -190,7 +190,7 @@ def detect(frame):
         (_, av_black_white) = cv2.threshold(av_gray, 90, 255, cv2.THRESH_BINARY)
         av_black_white = cv2.bitwise_not(av_black_white)
 
-        _, contours, _ = cv2.findContours(av_black_white, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+        contours, _ = cv2.findContours(av_black_white, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 
 
         cnt = contours[0]

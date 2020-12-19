@@ -118,7 +118,7 @@ def find_area_of_interest(frame):
     # Converting the image to black and white
     (_, res) = cv2.threshold(res, 90, 255, cv2.THRESH_BINARY)
 
-    _, contours, _ = cv2.findContours(res, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    contours, _ = cv2.findContours(res, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 
     
     cnt = contours[0]
@@ -161,6 +161,7 @@ while(video.isOpened()):
         
         ymin, xmin, ymax, xmax = area_of_interest
 
+        ori_frame = frame.copy()
         frame = frame[ymin:ymax, xmin:xmax]
 
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -260,7 +261,7 @@ while(video.isOpened()):
             # cv2.imshow('Aloe Vera 02', av_frame)
 
             # Test
-            _, contours, hierarchy = cv2.findContours(av_black_white, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+            contours, hierarchy = cv2.findContours(av_black_white, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 
 
             cnt = contours[0]
@@ -334,9 +335,13 @@ while(video.isOpened()):
             line_thickness=8,
             min_score_thresh=min_score_thresh,
             max_boxes_to_draw=50)
-        
-        frameResize = cv2.resize(frame, (800, 600))
 
+        ymin, xmin, ymax, xmax = area_of_interest
+        ori_frame[ymin:ymax, xmin:xmax, :] = frame
+        frameResize = cv2.resize(frame, (800, 600))
+        big_frame = cv2.resize(ori_frame, (800, 600))
+
+        cv2.imshow('Original Frame', big_frame)
         cv2.imshow('Object detector', frameResize)
         cv2.waitKey(10)
 
